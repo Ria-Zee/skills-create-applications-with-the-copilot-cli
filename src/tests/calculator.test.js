@@ -20,6 +20,21 @@ describe('Calculator - basic operations', () => {
     expect(calculate('div', 20, 5)).toBe(4);
     expect(calculate('div', '20', '5')).toBe(4);
   });
+
+  test('modulo: 10 % 3 = 1', () => {
+    expect(calculate('mod', 10, 3)).toBe(1);
+    expect(calculate('mod', '10', '3')).toBe(1);
+  });
+
+  test('power: 2 ^ 10 = 1024', () => {
+    expect(calculate('pow', 2, 10)).toBe(1024);
+    expect(calculate('pow', '2', '10')).toBe(1024);
+  });
+
+  test('square root: sqrt 25 = 5', () => {
+    expect(calculate('sqrt', 25)).toBe(5);
+    expect(calculate('sqrt', '25')).toBe(5);
+  });
 });
 
 describe('Calculator - edge cases and validation', () => {
@@ -27,12 +42,21 @@ describe('Calculator - edge cases and validation', () => {
     expect(() => calculate('div', 10, 0)).toThrow('Division by zero');
   });
 
+  test('modulo by zero throws', () => {
+    expect(() => calculate('mod', 10, 0)).toThrow('Division by zero');
+  });
+
   test('invalid operands throw', () => {
     expect(() => calculate('add', 'foo', 2)).toThrow('Operands must be valid numbers');
     expect(() => calculate('mul', 2, 'bar')).toThrow('Operands must be valid numbers');
+    expect(() => calculate('sqrt', 'foo')).toThrow('Operands must be valid numbers');
+  });
+
+  test('square root of negative number throws', () => {
+    expect(() => calculate('sqrt', -4)).toThrow('Square root of negative number');
   });
 
   test('unknown operation throws', () => {
-    expect(() => calculate('pow', 2, 3)).toThrow('Unknown operation');
+    expect(() => calculate('xyz', 2, 3)).toThrow('Unknown operation');
   });
 });

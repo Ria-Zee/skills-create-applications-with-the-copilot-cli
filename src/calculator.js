@@ -19,7 +19,46 @@
  * On invalid usage it prints a short help message and exits with a non-zero code.
  */
 
+// Helper: modulo (remainder)
+function modulo(a, b) {
+  const x = Number(a);
+  const y = Number(b);
+  if (Number.isNaN(x) || Number.isNaN(y)) {
+    throw new Error('Operands must be valid numbers');
+  }
+  if (y === 0) throw new Error('Division by zero');
+  return x % y;
+}
+
+// Helper: power (exponentiation)
+function power(base, exponent) {
+  const b = Number(base);
+  const e = Number(exponent);
+  if (Number.isNaN(b) || Number.isNaN(e)) {
+    throw new Error('Operands must be valid numbers');
+  }
+  return Math.pow(b, e);
+}
+
+// Helper: square root with validation for negative numbers
+function squareRoot(n) {
+  const x = Number(n);
+  if (Number.isNaN(x)) {
+    throw new Error('Operands must be valid numbers');
+  }
+  if (x < 0) throw new Error('Square root of negative number');
+  return Math.sqrt(x);
+}
+
 function calculate(op, a, b) {
+  // 'sqrt' is a single-operand operation
+  if (op === 'sqrt') {
+    const x = Number(a);
+    if (Number.isNaN(x)) throw new Error('Operands must be valid numbers');
+    if (x < 0) throw new Error('Square root of negative number');
+    return squareRoot(x);
+  }
+
   const x = Number(a);
   const y = Number(b);
   if (Number.isNaN(x) || Number.isNaN(y)) {
@@ -36,27 +75,36 @@ function calculate(op, a, b) {
     case 'div':
       if (y === 0) throw new Error('Division by zero');
       return x / y;
+    case 'mod':
+      if (y === 0) throw new Error('Division by zero');
+      return x % y;
+    case 'pow':
+      return power(x, y);
     default:
       throw new Error('Unknown operation');
   }
 }
 
 function printUsage() {
-  console.error('Usage: node src/calculator.js <add|sub|mul|div> <num1> <num2>');
-  console.error('Example: node src/calculator.js add 2 3');
+  console.error('Usage: node src/calculator.js <add|sub|mul|div|mod|pow|sqrt> <num1> <num2?>');
+  console.error('Examples:');
+  console.error('  node src/calculator.js add 2 3');
+  console.error('  node src/calculator.js sqrt 25');
 }
 
 if (require.main === module) {
   const args = process.argv.slice(2);
-  if (args.length !== 3) {
+  const op = args[0];
+
+  // support: sqrt (1 operand) or other ops (2 operands)
+  if (!op || (op === 'sqrt' ? args.length !== 2 : args.length !== 3)) {
     printUsage();
     process.exit(2);
   }
 
-  const [op, a, b] = args;
+  const [, a, b] = args;
   try {
     const result = calculate(op, a, b);
-    // Print as-is; keep integer format when appropriate
     console.log(result);
     process.exit(0);
   } catch (err) {
@@ -64,8 +112,12 @@ if (require.main === module) {
       console.error('Error: Division by zero');
       process.exit(3);
     }
+    if (err.message === 'Square root of negative number') {
+      console.error('Error: Square root of negative number');
+      process.exit(5);
+    }
     if (err.message === 'Unknown operation') {
-      console.error('Error: Unknown operation. Supported: add, sub, mul, div');
+      console.error('Error: Unknown operation. Supported: add, sub, mul, div, mod, pow, sqrt');
       printUsage();
       process.exit(4);
     }
@@ -76,4 +128,4 @@ if (require.main === module) {
 }
 
 // export for programmatic use / tests
-module.exports = { calculate };
+module.exports = { calculate, modulo, power, squareRoot };
