@@ -21,6 +21,23 @@ describe('Calculator - basic operations', () => {
     expect(calculate('div', '20', '5')).toBe(4);
   });
 
+  // Examples from calc-extended-operations.png
+  test('modulo example: 5 % 2 = 1', () => {
+    expect(calculate('mod', 5, 2)).toBe(1);
+    expect(calculate('mod', '5', '2')).toBe(1);
+  });
+
+  test('power example: 2 ^ 3 = 8', () => {
+    expect(calculate('pow', 2, 3)).toBe(8);
+    expect(calculate('pow', '2', '3')).toBe(8);
+  });
+
+  test('square root example: sqrt 16 = 4', () => {
+    expect(calculate('sqrt', 16)).toBe(4);
+    expect(calculate('sqrt', '16')).toBe(4);
+  });
+
+  // other examples/previous tests
   test('modulo: 10 % 3 = 1', () => {
     expect(calculate('mod', 10, 3)).toBe(1);
     expect(calculate('mod', '10', '3')).toBe(1);
